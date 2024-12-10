@@ -4,7 +4,6 @@ import { useFormContext } from "react-hook-form";
 const PeopleTypeSelection = () => {
     const { setValue, watch, formState: { errors } } = useFormContext();
     const selectedPeopleType = watch("peopleType");
-    console.log(selectedPeopleType);
 
     return (
         <div className="w-full text-center space-y-6">

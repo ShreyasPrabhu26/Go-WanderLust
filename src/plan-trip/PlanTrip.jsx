@@ -14,13 +14,14 @@ import { useForm, FormProvider } from "react-hook-form"
 
 const PlanTrip = () => {
     const [currentStep, setCurrentStep] = useState(1);
+    const [isValidInput, setIsValidInput] = useState(true);
 
     const methods = useForm();
     const onSubmit = (data) => console.log(data);
 
     const handleNext = async () => {
-        const isValid = await methods.trigger();
-        if (isValid && currentStep < steps.length) {
+        setIsValidInput(await methods.trigger())
+        if (isValidInput && currentStep < steps.length) {
             setCurrentStep(currentStep + 1);
         }
     };
@@ -59,7 +60,9 @@ const PlanTrip = () => {
                                 Generate Trip
                             </Button>
                         ) : (
-                            <Button onClick={handleNext} className="bg-green-200">
+                            <Button
+                                onClick={handleNext}
+                                className="bg-green-200">
                                 Next
                             </Button>
                         )}
