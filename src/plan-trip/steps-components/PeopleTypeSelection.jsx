@@ -1,20 +1,23 @@
-import { TRAVEL_LIST } from "@/constants/options"
-import { useState } from "react"
+import { TRAVEL_LIST } from "@/constants/options";
+import { useFormContext } from "react-hook-form";
 
 const PeopleTypeSelection = () => {
-    const [selectedPeopleType, setSelectedPeopleType] = useState("")
+    const { setValue, watch, formState: { errors } } = useFormContext();
+    const selectedPeopleType = watch("peopleType");
+    console.log(selectedPeopleType);
+
     return (
         <div className="w-full text-center space-y-6">
             <span className="bg-green-200 p-2 rounded-lg text-xl font-medium">
-                Whome do you plan on travelling with on your next Adventure?
+                Whom do you plan on traveling with on your next adventure?
             </span>
             <div className="flex flex-col md:flex-row justify-center items-center gap-5">
                 {TRAVEL_LIST.map((peopleType) => (
                     <div
                         key={peopleType.id}
-                        onClick={() => setSelectedPeopleType(peopleType.id)}
-                        className={`flex flex-col items-center justify-center p-6 border rounded-lg cursor-pointer hover:shadow-lg  h-36
-                    ${selectedPeopleType === peopleType.id
+                        onClick={() => setValue("peopleType", peopleType.title, { shouldValidate: true })}
+                        className={`flex flex-col items-center justify-center p-6 border rounded-lg cursor-pointer hover:shadow-lg h-36
+                        ${selectedPeopleType === peopleType.title
                                 ? "border-primary bg-blue-400 text-primary-foreground"
                                 : "border-border bg-muted text-foreground"
                             }`}
@@ -29,8 +32,11 @@ const PeopleTypeSelection = () => {
                     </div>
                 ))}
             </div>
+            {errors.peopleType && (
+                <p className="text-red-500 text-sm mt-2">{errors.peopleType.message}</p>
+            )}
         </div>
-    )
-}
+    );
+};
 
-export default PeopleTypeSelection
+export default PeopleTypeSelection;

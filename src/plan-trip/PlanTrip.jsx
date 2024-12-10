@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationEllipsis,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/components/ui/pagination";
+
 
 import Header from "./Header";
 import DestinationSelection from "./steps-components/DestinationSelection";
@@ -16,18 +9,18 @@ import PeopleTypeSelection from "./steps-components/PeopleTypeSelection";
 
 import { Button } from "@/components/ui/button";
 
+import { useForm, FormProvider } from "react-hook-form"
+
+
 const PlanTrip = () => {
     const [currentStep, setCurrentStep] = useState(1);
 
-    const steps = [
-        <DestinationSelection />,
-        <DaysSelection />,
-        <BudgetSelection />,
-        <PeopleTypeSelection />,
-    ];
+    const methods = useForm();
+    const onSubmit = (data) => console.log(data);
 
-    const handleNext = () => {
-        if (currentStep < steps.length) {
+    const handleNext = async () => {
+        const isValid = await methods.trigger();
+        if (isValid && currentStep < steps.length) {
             setCurrentStep(currentStep + 1);
         }
     };
@@ -38,43 +31,42 @@ const PlanTrip = () => {
         }
     };
 
+    const steps = [
+        <DestinationSelection />,
+        <DaysSelection />,
+        <BudgetSelection />,
+        <PeopleTypeSelection />,
+    ];
+
     return (
-        <div className="h-full flex flex-col items-center  p-5 space-y-5 overflow-auto bg-gradient-to-r from-blue-50 to-blue-100">
-            <Header />
-            <main className="flex flex-col items-center max-w-2xl w-full space-y-10">
-                <div>{steps[currentStep - 1]}</div>
-                {currentStep === steps.length && (
-                    <Button size="lg" className="w-[80vw] md:w-auto">
-                        Generate Trip
-                    </Button>
-                )}
-                <Pagination>
-                    <PaginationContent>
-                        <PaginationItem>
-                            <PaginationPrevious
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handlePrevious();
-                                }}
-                                className={currentStep === 1 ? "hidden" : "bg-blue-300 outline-double"}
-                            />
-                        </PaginationItem>
-                        <PaginationItem className={(currentStep === 1 || currentStep === steps.length) ? "hidden" : ""}>
-                            <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationNext
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleNext();
-                                }}
-                                className={currentStep === steps.length ? "hidden" : "bg-green-200 outline-double"}
-                            />
-                        </PaginationItem>
-                    </PaginationContent>
-                </Pagination>
-            </main>
-        </div>
+        <FormProvider {...methods}>
+            <div className="h-full flex flex-col items-center p-5 space-y-5 overflow-auto bg-gradient-to-r from-blue-50 to-blue-100">
+                <Header />
+                <main className="flex flex-col items-center max-w-2xl w-full space-y-10">
+                    <form>
+                        {steps[currentStep - 1]}
+                    </form>
+                    <div className="flex justify-between w-full">
+                        <Button
+                            onClick={handlePrevious}
+                            disabled={currentStep === 1}
+                            className="bg-blue-300"
+                        >
+                            Previous
+                        </Button>
+                        {currentStep === steps.length ? (
+                            <Button onClick={methods.handleSubmit(onSubmit)} className="bg-green-500">
+                                Generate Trip
+                            </Button>
+                        ) : (
+                            <Button onClick={handleNext} className="bg-green-200">
+                                Next
+                            </Button>
+                        )}
+                    </div>
+                </main>
+            </div>
+        </FormProvider>
     );
 };
 

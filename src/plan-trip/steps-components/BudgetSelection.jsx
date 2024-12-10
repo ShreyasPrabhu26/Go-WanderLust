@@ -1,8 +1,9 @@
-import { BUDGET_OPTIONS } from "@/constants/options"
-import { useState } from "react"
+import { BUDGET_OPTIONS } from "@/constants/options";
+import { useFormContext } from "react-hook-form";
 
 const BudgetSelection = () => {
-    const [selectedBudget, setSelectedBudget] = useState("");
+    const { setValue, watch } = useFormContext();
+    const selectedBudget = watch("budget");
 
     return (
         <div className="w-full text-center space-y-6">
@@ -13,7 +14,7 @@ const BudgetSelection = () => {
                 {BUDGET_OPTIONS.map((budget) => (
                     <div
                         key={budget.id}
-                        onClick={() => setSelectedBudget(budget.id)}
+                        onClick={() => setValue("budget", budget.id)}
                         className={`flex flex-col items-center justify-center p-4 md:p-6 border rounded-lg cursor-pointer hover:shadow-lg 
                                     ${selectedBudget === budget.id
                                 ? "border-primary bg-blue-400 text-primary-foreground"
@@ -30,7 +31,9 @@ const BudgetSelection = () => {
                         <span className="font-semibold text-base md:text-lg mt-2 text-wrap">
                             {budget.title}
                         </span>
-                        <p className="text-sm text-center mt-1 hidden md:block">{budget.description}</p>
+                        <p className="text-sm text-center mt-1 hidden md:block">
+                            {budget.description}
+                        </p>
                     </div>
                 ))}
             </div>
