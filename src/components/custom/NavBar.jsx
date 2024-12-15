@@ -1,7 +1,10 @@
 import React from 'react';
+import { auth } from "../../service/firebase";
 import { Button } from '../ui/button';
+import SignIn from '../authentication/SignIn';
 
 const NavBar = () => {
+
     return (
         <div className="p-3 px-5 shadow-md flex justify-between items-center bg-background text-foreground dark:bg-background dark:text-foreground border-b border-border">
             <img
@@ -9,11 +12,7 @@ const NavBar = () => {
                 src="/logo-transparent.png"
                 alt="Go Wanderlust"
             />
-            <Button
-                className="bg-primary text-primary-foreground hover:bg-secondary hover:text-secondary-foreground px-4 py-2 rounded-lg"
-            >
-                Get Started
-            </Button>
+            <SignIn />
         </div>
     );
 };
