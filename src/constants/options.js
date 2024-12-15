@@ -2,6 +2,7 @@ export const TRAVEL_LIST = [
     {
         id: 1,
         title: "Solo Explorer",
+        key: "Solo Trip",
         description: "Embark on a personal journey of discovery.",
         icon: '✈️',
         people: "1"
@@ -9,6 +10,7 @@ export const TRAVEL_LIST = [
     {
         id: 2,
         title: "Romantic Escape",
+        key: "Couples",
         description: "A perfect getaway for two hearts in sync.",
         icon: '🥂',
         people: "2"
@@ -16,6 +18,7 @@ export const TRAVEL_LIST = [
     {
         id: 3,
         title: "Adventure Crew",
+        key: "Friends",
         description: "Gather your squad for an unforgettable escapade.",
         icon: '🚣',
         people: "5 to 10 People"
@@ -23,6 +26,7 @@ export const TRAVEL_LIST = [
     {
         id: 4,
         title: "Family Retreat",
+        key: "Family",
         description: "Create cherished memories with your loved ones.",
         icon: '🏡',
         people: "3 to 5 People"

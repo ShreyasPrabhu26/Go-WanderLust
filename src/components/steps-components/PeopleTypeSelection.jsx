@@ -14,9 +14,9 @@ const PeopleTypeSelection = () => {
                 {TRAVEL_LIST.map((peopleType) => (
                     <div
                         key={peopleType.id}
-                        onClick={() => setValue("peopleType", peopleType.title, { shouldValidate: true })}
+                        onClick={() => setValue("peopleType", peopleType.key, { shouldValidate: true })}
                         className={`flex flex-col items-center justify-center p-6 border rounded-lg cursor-pointer hover:shadow-lg h-36
-                        ${selectedPeopleType === peopleType.title
+                        ${selectedPeopleType === peopleType.key
                                 ? "border-primary bg-blue-400 text-primary-foreground"
                                 : "border-border bg-muted text-foreground"
                             }`}

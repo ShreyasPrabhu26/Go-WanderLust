@@ -2,8 +2,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 
 import NavBar from './components/custom/NavBar'
 import Hero from './components/custom/Hero'
-import PlanTrip from './plan-trip/PlanTrip'
+import PlanTrip from './pages/plan-trip/PlanTrip'
 import './App.css'
+import ProtectedRoute from './pages/ProtectedRoute'
 
 const router = createBrowserRouter([
   {
@@ -12,7 +13,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/plan-trip',
-    element: <PlanTrip />
+    element: (
+      <ProtectedRoute>
+        <PlanTrip />
+      </ProtectedRoute>
+    ),
   },
 ])
 

@@ -2,14 +2,15 @@ import React, { useState } from "react";
 
 
 import Header from "./Header";
-import DestinationSelection from "./steps-components/DestinationSelection";
-import DaysSelection from "./steps-components/DaySelection";
-import BudgetSelection from "./steps-components/BudgetSelection";
-import PeopleTypeSelection from "./steps-components/PeopleTypeSelection";
+import DestinationSelection from "../../components/steps-components/DestinationSelection";
+import DaysSelection from "../../components/steps-components/DaySelection";
+import BudgetSelection from "../../components/steps-components/BudgetSelection";
+import PeopleTypeSelection from "../../components/steps-components/PeopleTypeSelection";
 
 import { Button } from "@/components/ui/button";
 
 import { useForm, FormProvider } from "react-hook-form"
+import chatSession from "@/service/AIModel";
 
 
 const PlanTrip = () => {
@@ -17,7 +18,38 @@ const PlanTrip = () => {
     const [isValidInput, setIsValidInput] = useState(true);
 
     const methods = useForm();
-    const onSubmit = (data) => console.log(data);
+    const onSubmit = async (data) => {
+        console.log(data);
+        try {
+            if (!data) {
+                throw new Error("Error retrieving form data!");
+            }
+
+            const { destination, budget, days, peopleType } = data;
+
+            if (!destination?.value || !budget || !days || !peopleType) {
+                throw new Error("Incomplete form data. Please fill all required fields.");
+            }
+
+            const AI_PROMPT = `
+                Generate a Travel Plan for Location: ${destination.label} for ${days} days 
+                with ${peopleType}, staying within a ${budget} budget. 
+                Provide the following details:
+                - Hotel options (HotelName, Hotel Address, Price, Hotel Image URL, Geo Coordinates, Rating, Description).
+                - A detailed itinerary for ${days} days with:
+                  - Place Name, Place Details, Place Image URL(dont give example placeholder), Geo Coordinates, Place Address, Ticket Pricing, 
+                    Travel Time to each location, and the best time to visit.
+                Format the output in JSON.
+            `;
+
+            const result = await chatSession.sendMessage(AI_PROMPT)
+            console.log(result?.response?.text());
+
+        } catch (error) {
+            console.error("Error in onSubmit:", error.message);
+        }
+    };
+
 
     const handleNext = async () => {
         setIsValidInput(await methods.trigger())

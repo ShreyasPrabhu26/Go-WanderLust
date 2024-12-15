@@ -14,9 +14,9 @@ const BudgetSelection = () => {
                 {BUDGET_OPTIONS.map((budget) => (
                     <div
                         key={budget.id}
-                        onClick={() => setValue("budget", budget.id)}
+                        onClick={() => setValue("budget", budget.title)}
                         className={`flex flex-col items-center justify-center p-4 md:p-6 border rounded-lg cursor-pointer hover:shadow-lg 
-                                    ${selectedBudget === budget.id
+                                    ${selectedBudget === budget.title
                                 ? "border-primary bg-blue-400 text-primary-foreground"
                                 : "border-border bg-muted text-foreground"
                             }`}
