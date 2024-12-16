@@ -1,34 +1,57 @@
-import React, { useState } from 'react';
-import { auth } from '../../service/firebase';
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import React from 'react';
+import { useAuth } from '../../hooks/useAuth';
+import { auth, googleProvider } from '../../service/firebase';
+import { signInWithPopup, signOut } from 'firebase/auth';
 import { Button } from '../ui/button';
 
 const SignIn = () => {
-    const [isLoading, setIsLoading] = useState(false);
+    const { user, loading } = useAuth();
 
+    // Handle Google Sign-In
     const handleGoogleSignIn = async () => {
-        setIsLoading(true);
         try {
-            const provider = new GoogleAuthProvider();
-            const result = await signInWithPopup(auth, provider);
-            console.log('Signed in user:', result.user);
+            await signInWithPopup(auth, googleProvider);
         } catch (error) {
-            console.error('Error during Google Sign-In:', error);
-        } finally {
-            setIsLoading(false);
+            console.error("Error signing in with Google:", error.message);
         }
     };
 
-    return (
-        <div>
-            <Button
-                onClick={handleGoogleSignIn}
-                className="bg-primary text-primary-foreground px-4 py-2 rounded-lg"
-                disabled={isLoading}
-            >
-                {isLoading ? 'Signing In...' : 'Sign in with Google'}
+    // Handle Logout
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+        } catch (error) {
+            console.error("Error signing out:", error.message);
+        }
+    };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    return user ? (
+        <div className="flex items-center gap-3">
+            {/* User Avatar */}
+
+            <img
+                src={user.photoURL}
+                alt={user.displayName || 'User'}
+                className="h-10 w-10 rounded-full"
+            />
+
+            {/* User Name */}
+            <span className="text-sm font-medium">{user.displayName}</span>
+
+            {/* Logout Button */}
+            <Button variant="secondary" onClick={handleLogout}>
+                Logout
             </Button>
         </div>
+    ) : (
+        // Google Sign-In Button
+        <Button variant="primary" onClick={handleGoogleSignIn}>
+            Sign In with Google
+        </Button>
     );
 };
 
