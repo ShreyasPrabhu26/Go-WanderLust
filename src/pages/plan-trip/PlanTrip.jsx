@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { useForm, FormProvider } from "react-hook-form";
 
 import Header from "./Header";
 import DestinationSelection from "../../components/steps-components/DestinationSelection";
@@ -8,22 +8,38 @@ import BudgetSelection from "../../components/steps-components/BudgetSelection";
 import PeopleTypeSelection from "../../components/steps-components/PeopleTypeSelection";
 
 import { Button } from "@/components/ui/button";
-
-import { useForm, FormProvider } from "react-hook-form"
 import chatSession from "@/service/AIModel";
-
+import { db } from "@/service/firebase";
+import { useAuth } from "@/hooks/useAuth";
+import { doc, setDoc } from "firebase/firestore";
 
 const PlanTrip = () => {
     const [currentStep, setCurrentStep] = useState(1);
     const [isValidInput, setIsValidInput] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const { user } = useAuth();
 
     const methods = useForm();
+
+    const saveTrip = async (userSelections, tripDataFromAi) => {
+        if (userSelections?.destination)
+            userSelections.destination = userSelections?.destination?.label
+
+        const docID = Date.now().toString();
+        await setDoc(doc(db, "AITrips", docID), {
+            id: docID,
+            userEmail: user?.email,
+            userSelections,
+            tripDataFromAi: JSON.parse(tripDataFromAi),
+        });
+    };
+
     const onSubmit = async (data) => {
-        console.log(data);
         try {
             if (!data) {
                 throw new Error("Error retrieving form data!");
             }
+            setLoading(true);
 
             const { destination, budget, days, peopleType } = data;
 
@@ -37,22 +53,23 @@ const PlanTrip = () => {
                 Provide the following details:
                 - Hotel options (HotelName, Hotel Address, Price, Hotel Image URL, Geo Coordinates, Rating, Description).
                 - A detailed itinerary for ${days} days with:
-                  - Place Name, Place Details, Place Image URL(dont give example placeholder), Geo Coordinates, Place Address, Ticket Pricing, 
+                  - Place Name, Place Details, Place Image URL (don’t give example placeholder), Geo Coordinates, Place Address, Ticket Pricing, 
                     Travel Time to each location, and the best time to visit.
                 Format the output in JSON.
             `;
 
-            const result = await chatSession.sendMessage(AI_PROMPT)
-            console.log(result?.response?.text());
-
+            const result = await chatSession.sendMessage(AI_PROMPT);
+            const finalResult = result?.response?.text();
+            await saveTrip(data, finalResult);
         } catch (error) {
             console.error("Error in onSubmit:", error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
-
     const handleNext = async () => {
-        setIsValidInput(await methods.trigger())
+        setIsValidInput(await methods.trigger());
         if (isValidInput && currentStep < steps.length) {
             setCurrentStep(currentStep + 1);
         }
@@ -76,25 +93,36 @@ const PlanTrip = () => {
             <div className="h-full flex flex-col items-center p-5 space-y-5 overflow-auto bg-gradient-to-r from-blue-50 to-blue-100">
                 <Header />
                 <main className="flex flex-col items-center max-w-2xl w-full space-y-10">
+                    {loading && (
+                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white"></div>
+                        </div>
+                    )}
                     <form>
                         {steps[currentStep - 1]}
                     </form>
                     <div className="flex justify-between w-full">
                         <Button
                             onClick={handlePrevious}
-                            disabled={currentStep === 1}
+                            disabled={currentStep === 1 || loading}
                             className="bg-blue-300"
                         >
                             Previous
                         </Button>
                         {currentStep === steps.length ? (
-                            <Button onClick={methods.handleSubmit(onSubmit)} className="bg-green-500">
-                                Generate Trip
+                            <Button
+                                onClick={methods.handleSubmit(onSubmit)}
+                                className="bg-green-500"
+                                disabled={loading}
+                            >
+                                {loading ? "Generating..." : "Generate Trip"}
                             </Button>
                         ) : (
                             <Button
                                 onClick={handleNext}
-                                className="bg-green-200">
+                                className="bg-green-200"
+                                disabled={loading}
+                            >
                                 Next
                             </Button>
                         )}
@@ -104,6 +132,5 @@ const PlanTrip = () => {
         </FormProvider>
     );
 };
-
 
 export default PlanTrip;
