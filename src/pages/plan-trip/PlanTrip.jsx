@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 
 import Header from "./Header";
@@ -12,26 +12,37 @@ import chatSession from "@/service/AIModel";
 import { db } from "@/service/firebase";
 import { useAuth } from "@/hooks/useAuth";
 import { doc, setDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import { TripDataContext } from "@/App";
 
 const PlanTrip = () => {
+    const naviagte = useNavigate();
+    const { user } = useAuth();
+    const methods = useForm();
+
+    const { setTripData } = useContext(TripDataContext);
+
     const [currentStep, setCurrentStep] = useState(1);
     const [isValidInput, setIsValidInput] = useState(true);
     const [loading, setLoading] = useState(false);
-    const { user } = useAuth();
-
-    const methods = useForm();
 
     const saveTrip = async (userSelections, tripDataFromAi) => {
         if (userSelections?.destination)
             userSelections.destination = userSelections?.destination?.label
 
         const docID = Date.now().toString();
-        await setDoc(doc(db, "AITrips", docID), {
+        
+        const finalData = {
             id: docID,
             userEmail: user?.email,
             userSelections,
             tripDataFromAi: JSON.parse(tripDataFromAi),
-        });
+        }
+
+        await setDoc(doc(db, "AITrips", docID), finalData);
+        setLoading(false);
+        setTripData(finalData)
+        naviagte(`/view-trip/${docID}`)
     };
 
     const onSubmit = async (data) => {
