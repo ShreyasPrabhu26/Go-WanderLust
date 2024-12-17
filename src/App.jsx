@@ -4,10 +4,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './App.css';
 
 import Layout from './components/Layout';
-import Hero from './components/custom/Hero';
+import Hero from './components/Hero';
 import ProtectedRoute from './pages/ProtectedRoute';
 import PlanTrip from './pages/plan-trip/PlanTrip';
-import ViewTrip from './pages/view-trip/[tripId]/ViewTrip';
+import ViewTrip from './pages/view-trip/ViewTrip';
 
 export const TripDataContext = createContext(null);
 
@@ -38,20 +38,7 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  const [tripData, setTripData] = useState({
-    id: null,
-    tripDataFromAi: {
-      hotels: [],
-      itinerary: [],
-      userEmail: '',
-    },
-    userSelections: {
-      budget: '',
-      days: '',
-      destination: '',
-      peopleType: '',
-    },
-  });
+  const [tripData, setTripData] = useState(null);
 
   return (
     <TripDataContext.Provider value={{ tripData, setTripData }}>

@@ -1,5 +1,5 @@
 import React from 'react';
-import SignIn from '../authentication/SignIn';
+import SignIn from './authentication/SignIn';
 import { useNavigate } from 'react-router-dom';
 
 const NavBar = () => {

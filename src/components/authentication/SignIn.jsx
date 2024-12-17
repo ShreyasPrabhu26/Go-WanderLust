@@ -3,6 +3,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { auth, googleProvider } from '../../service/firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import { Button } from '../ui/button';
+import LoadingSpinner from '../LoadingSpinner';
 
 const SignIn = () => {
     const { user, loading } = useAuth();
@@ -26,7 +27,7 @@ const SignIn = () => {
     };
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <LoadingSpinner />;
     }
 
     return user ? (

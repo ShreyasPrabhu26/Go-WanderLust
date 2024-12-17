@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import { TripDataContext } from "@/App";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const PlanTrip = () => {
     const naviagte = useNavigate();
@@ -31,7 +32,7 @@ const PlanTrip = () => {
             userSelections.destination = userSelections?.destination?.label
 
         const docID = Date.now().toString();
-        
+
         const finalData = {
             id: docID,
             userEmail: user?.email,
@@ -104,11 +105,7 @@ const PlanTrip = () => {
             <div className="h-full flex flex-col items-center p-5 space-y-5 overflow-auto bg-gradient-to-r from-blue-50 to-blue-100">
                 <Header />
                 <main className="flex flex-col items-center max-w-2xl w-full space-y-10">
-                    {loading && (
-                        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-white"></div>
-                        </div>
-                    )}
+                    {loading && <LoadingSpinner />}
                     <form>
                         {steps[currentStep - 1]}
                     </form>

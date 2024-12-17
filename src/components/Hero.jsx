@@ -1,12 +1,13 @@
 import React from 'react';
-import { Button } from '../ui/button';
+import { Button } from './ui/button';
 import { useNavigate } from 'react-router-dom';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from '@/service/firebase';
 import { useAuth } from '@/hooks/useAuth';
+import LoadingSpinner from './LoadingSpinner';
 
 const Hero = () => {
-    const { user } = useAuth();
+    const { user, loading } = useAuth();
     const navigate = useNavigate();
 
     const handleGetStarted = async () => {
@@ -21,6 +22,10 @@ const Hero = () => {
             console.error("Error during Get Started:", error.message);
         }
     };
+
+    if (loading) {
+        return <LoadingSpinner />
+    }
 
     return (
         <div className="h-[70vh] p-5 flex flex-col gap-5 items-center justify-center bg-background text-foreground dark:bg-background dark:text-foreground">
