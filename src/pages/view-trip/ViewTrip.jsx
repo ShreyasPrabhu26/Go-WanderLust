@@ -7,6 +7,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import InfoSection from './componenets/InfoSection';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Hotels from './componenets/Hotels';
+import PlacesToVisit from './componenets/PlacesToVisit';
 
 const ViewTrip = () => {
   const { tripId } = useParams();
@@ -34,13 +35,16 @@ const ViewTrip = () => {
     return <LoadingSpinner />;
   }
   if (tripData) {
+    console.log(tripData);
+
     const { userSelections, tripDataFromAi } = tripData;
-    const { itineray, hotels } = tripDataFromAi;
+    const { itinerary, hotels } = tripDataFromAi;
     return (
       <>
         <div className='md:px-20 lg:px-44 xl:px-56'>
           <InfoSection userSelections={userSelections} />
           <Hotels hotels={hotels} />
+          <PlacesToVisit itinerary={itinerary} />
         </div>
       </>
     );
