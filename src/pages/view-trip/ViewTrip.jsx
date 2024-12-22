@@ -35,8 +35,6 @@ const ViewTrip = () => {
     return <LoadingSpinner />;
   }
   if (tripData) {
-    console.log(tripData);
-
     const { userSelections, tripDataFromAi } = tripData;
     const { itinerary, hotels } = tripDataFromAi;
     return (
