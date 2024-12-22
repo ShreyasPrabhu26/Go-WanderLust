@@ -8,6 +8,7 @@ import Hero from './components/Hero';
 import ProtectedRoute from './pages/ProtectedRoute';
 import PlanTrip from './pages/plan-trip/PlanTrip';
 import ViewTrip from './pages/view-trip/ViewTrip';
+import MyTrips from './pages/my-trips/MyTrips';
 
 export const TripDataContext = createContext(null);
 
@@ -30,6 +31,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ViewTrip />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: '/my-trips',
+        element: (
+          <ProtectedRoute>
+            <MyTrips />
           </ProtectedRoute>
         ),
       },
